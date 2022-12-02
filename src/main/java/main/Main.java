@@ -1,8 +1,7 @@
 package main;
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
@@ -10,117 +9,136 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 
-import com.opencsv.bean.StatefulBeanToCsv;
-import com.opencsv.bean.StatefulBeanToCsvBuilder;
-import com.opencsv.exceptions.CsvDataTypeMismatchException;
-import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
-
+import common.Utils;
 import data.Question;
 import data.Question.SELECTION;
+import strategy.Ap_Strategy;
+import strategy.Sc_Strategy;
+import strategy.Strategy;
 
 public class Main {
 
-	private static final int NUMBER_OF_QUESTIONS = 675;
-
-	private static final long WAIT_TIME_MILL = 1000;
-
-	private static boolean FIRST = true;
-
+	/** 戦略群 */
+	private static Map<Integer, Strategy> strategies = new HashMap<>();
+	
+	static {
+		// 応用の戦略
+		strategies.put(1, new Ap_Strategy());
+		// 支援士の戦略
+		strategies.put(2, new Sc_Strategy());
+	}
+	
 	public static void main(String[] args) {
+		// 戦略を選択する(1:応用　2:支援士)
+		Strategy strategy = strategies.get(1);
+		// ポリシーを組み立てる
+		Policy policy = new Policy(strategy);
+		
+		// Seleniumドライバの生成
 		WebDriver driver = new ChromeDriver();
+		// 戦略ごとに初期化
+		policy.init(driver);
 
-		init(driver);
-
-		for (int i = 1; i <= NUMBER_OF_QUESTIONS; i++) {
-			await();
-
+		for (int i = 1; i <= policy.getNumberOf(); i++) {
 			try {
-				execute(driver);
+				execute(policy, driver, i);
 			} catch (NoSuchElementException e) {
-				// nothing...
+				// 取得できない場合は無視
 			}
-
+			// 次の問題へ
 			next(driver);
-
-			FIRST = false;
 		}
-
+		
+		// Seleniumドライバの終了
 		driver.quit();
-
 	}
 
-	private static void await() {
-		final int target = (int) (Math.random() * 10) + 1;
-		for (int i = 0; i < target; i++) {
-			try {
-				Thread.sleep(WAIT_TIME_MILL);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+	private static void execute(Policy policy, WebDriver driver, int i) {
+		Question question;
+		if(i == 1) {
+			// 1問目のみ
+			question = first(driver);
+		} else {
+			// 2問目以降
+			question = after(driver);
 		}
+		// 出力
+		policy.out(question);
 	}
 
-	private static void execute(WebDriver driver) throws NoSuchElementException {
+	/**
+	 * 初回問題のみのスクレイピング
+	 * 
+	 * @param driver Seleniumドライバ
+	 * @return 設問データ(年度と問題文のみ)
+	 */
+	private static Question first(final WebDriver driver) {
 		Question question = new Question();
 
-		WebElement year = null;
-		if (FIRST) {
-			year = driver.findElement(By.cssSelector(".main > div:nth-child(4)"));
-		} else {
-			year = driver.findElement(By.cssSelector(".main > div:nth-child(5)"));
-		}
-		final String y = year.getText();
-		if (y != null) {
-			question.setYear(y.replaceAll("\r\n", " ").replaceAll("\r", " ").replaceAll("\n", " "));
-		}
+		String year = driver.findElement(By.cssSelector(".main > div:nth-child(4)")).getText();
+		question.setYear(Utils.crlfToSpace(year));
 
-		WebElement title = null;
-		if (FIRST) {
-			title = driver.findElement(By.cssSelector(".main > div:nth-child(3)"));
-		} else {
-			title = driver.findElement(By.cssSelector(".main > div:nth-child(4)"));
-		}
-		question.setTitle(title.getText());
+		String title = driver.findElement(By.cssSelector(".main > div:nth-child(3)")).getText();
+		question.setTitle(Utils.crlfToSpace(title));
 
-		WebElement divA = driver.findElement(By.id("select_a"));
-		question.setA(divA.getText());
+		return common(driver, question);
+	}
 
-		WebElement divI = driver.findElement(By.id("select_i"));
-		question.setI(divI.getText());
+	/**
+	 * 2問目以降のスクレイピング
+	 * 
+	 * @param driver Seleniumドライバ
+	 * @return 設問データ(年度と問題文のみ)
+	 */
+	private static Question after(final WebDriver driver) {
+		Question question = new Question();
 
-		WebElement divU = driver.findElement(By.id("select_u"));
-		question.setU(divU.getText());
+		String year = driver.findElement(By.cssSelector(".main > div:nth-child(5)")).getText();
+		question.setYear(Utils.crlfToSpace(year));
 
-		WebElement divE = driver.findElement(By.id("select_e"));
-		question.setE(divE.getText());
+		String title = driver.findElement(By.cssSelector(".main > div:nth-child(4)")).getText();
+		question.setTitle(Utils.crlfToSpace(title));
+
+		return common(driver, question);
+	}
+
+	/**
+	 * 共通スクレイピング
+	 * @param driver Seleniumドライバ
+	 * @param question 設問データ(年度と問題文のみ)
+	 * @return 設問データ
+	 */
+	private static Question common(final WebDriver driver, Question question) {
+
+		String divA = driver.findElement(By.id("select_a")).getText();
+		question.setA(Utils.crlfToSpace(divA));
+
+		String divI = driver.findElement(By.id("select_i")).getText();
+		question.setI(Utils.crlfToSpace(divI));
+
+		String divU = driver.findElement(By.id("select_u")).getText();
+		question.setU(Utils.crlfToSpace(divU));
+
+		String divE = driver.findElement(By.id("select_e")).getText();
+		question.setE(Utils.crlfToSpace(divE));
 
 		driver.findElement(By.id("showAnswerBtn")).click();
 
 		WebElement ans = driver.findElement(By.id("answerChar"));
-
 		SELECTION selection = SELECTION.toSelection(ans.getText());
 		question.setAns(selection);
 
-		try (Writer writer = new FileWriter("text.csv", true);) {
-			StatefulBeanToCsv<Question> beanToCsv = new StatefulBeanToCsvBuilder<Question>(writer).build();
-			beanToCsv.write(question);
-		} catch (IOException | CsvDataTypeMismatchException | CsvRequiredFieldEmptyException e) {
-			e.printStackTrace();
-		}
+		return question;
 	}
 
-	private static void init(WebDriver driver) {
-		driver.get("https://www.sc-siken.com/sckakomon.php");
-
-		await();
-
-		driver.findElement(By.cssSelector(".submit")).click();
-	}
-
+	/**
+	 * 次の設問ボタンを押下
+	 * @param driver Seleniumドライバ
+	 */
 	private static void next(WebDriver driver) {
 		driver.findElement(By.cssSelector(".bottomBtns > .submit")).click();
 
-		await();
+		Utils.await();
 	}
 
 }

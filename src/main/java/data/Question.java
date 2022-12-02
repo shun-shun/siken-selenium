@@ -65,5 +65,10 @@ public class Question {
 			}
 			throw new IllegalArgumentException("指定された選択肢が存在しません");
 		}
+		
+		@Override
+		public String toString() {
+			return this.value;
+		}
 	}
 }
