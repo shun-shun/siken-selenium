@@ -1,5 +1,6 @@
 package main;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,11 +9,14 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import common.Utils;
 import data.Question;
 import data.Question.SELECTION;
 import strategy.Ap_Strategy;
+import strategy.Ip_Strategy;
 import strategy.Sc_Strategy;
 import strategy.Strategy;
 
@@ -26,11 +30,13 @@ public class Main {
 		strategies.put(1, new Ap_Strategy());
 		// 支援士の戦略
 		strategies.put(2, new Sc_Strategy());
+		// iパスの戦略
+		strategies.put(3, new Ip_Strategy());
 	}
 	
 	public static void main(String[] args) {
-		// 戦略を選択する(1:応用　2:支援士)
-		Strategy strategy = strategies.get(1);
+		// 戦略を選択する(1:応用　2:支援士　3:iパス)
+		Strategy strategy = strategies.get(3);
 		// ポリシーを組み立てる
 		Policy policy = new Policy(strategy);
 		
@@ -122,6 +128,7 @@ public class Main {
 		String divE = driver.findElement(By.id("select_e")).getText();
 		question.setE(Utils.crlfToSpace(divE));
 
+		Utils.await();
 		driver.findElement(By.id("showAnswerBtn")).click();
 
 		WebElement ans = driver.findElement(By.id("answerChar"));
@@ -136,7 +143,10 @@ public class Main {
 	 * @param driver Seleniumドライバ
 	 */
 	private static void next(WebDriver driver) {
-		driver.findElement(By.cssSelector(".bottomBtns > .submit")).click();
+		
+		WebDriverWait wait =  new WebDriverWait(driver, Duration.ofSeconds(10));
+	    WebElement element=  wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(".bottomBtns > .submit")));
+	    element.click();		
 
 		Utils.await();
 	}
