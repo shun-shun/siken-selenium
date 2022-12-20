@@ -35,8 +35,9 @@ public class Main {
 	}
 	
 	public static void main(String[] args) {
+		int input = getArgument(args);
 		// 戦略を選択する(1:応用　2:支援士　3:iパス)
-		Strategy strategy = strategies.get(3);
+		Strategy strategy = strategies.get(input);
 		// ポリシーを組み立てる
 		Policy policy = new Policy(strategy);
 		
@@ -57,6 +58,24 @@ public class Main {
 		
 		// Seleniumドライバの終了
 		driver.quit();
+	}
+
+	private static int getArgument(String[] args) {
+		int input = 0;
+		if(args.length == 1) {
+			try {
+				input = Integer.parseInt(args[0]);
+			}catch (NumberFormatException e) {
+				System.err.println("引数は数値で選択してください.");
+				System.exit(1);
+			}
+		} else if(args.length == 0) {
+			input = 1;
+		} else {
+			System.err.println("引数は1つのみ設定できます.");
+			System.exit(1);
+		}
+		return input;
 	}
 
 	private static void execute(Policy policy, WebDriver driver, int i) {
