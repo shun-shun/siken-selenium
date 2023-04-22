@@ -1,7 +1,9 @@
 package main;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.openqa.selenium.By;
@@ -9,6 +11,7 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -24,7 +27,7 @@ public class Main {
 
 	/** 戦略群 */
 	private static Map<Integer, Strategy> strategies = new HashMap<>();
-	
+
 	static {
 		// 応用の戦略
 		strategies.put(1, new Ap_Strategy());
@@ -33,18 +36,22 @@ public class Main {
 		// iパスの戦略
 		strategies.put(3, new Ip_Strategy());
 	}
-	
+
 	public static void main(String[] args) {
 		int input = getArgument(args);
 		// 戦略を選択する(1:応用　2:支援士　3:iパス)
-		Strategy strategy = strategies.get(input);
+		Strategy strategy = strategies.get(1);
+
+		List<String> select = new ArrayList<String>();
+		select.add("法務");
+		strategy.init(select);
+
 		// ポリシーを組み立てる
 		Policy policy = new Policy(strategy);
-		
 		// Seleniumドライバの生成
-		WebDriver driver = new ChromeDriver();
+		WebDriver driver = setOption();
 		// 戦略ごとに初期化
-		policy.init(driver);
+		policy.set(driver);
 
 		for (int i = 1; i <= policy.getNumberOf(); i++) {
 			try {
@@ -55,9 +62,16 @@ public class Main {
 			// 次の問題へ
 			next(driver);
 		}
-		
+
 		// Seleniumドライバの終了
 		driver.quit();
+	}
+
+	private static WebDriver setOption() {
+		ChromeOptions options = new ChromeOptions();
+		options.addArguments("--remote-allow-origins=*");
+		WebDriver driver = new ChromeDriver(options);
+		return driver;
 	}
 
 	private static int getArgument(String[] args) {
@@ -93,7 +107,7 @@ public class Main {
 
 	/**
 	 * 初回問題のみのスクレイピング
-	 * 
+	 *
 	 * @param driver Seleniumドライバ
 	 * @return 設問データ(年度と問題文のみ)
 	 */
@@ -111,7 +125,7 @@ public class Main {
 
 	/**
 	 * 2問目以降のスクレイピング
-	 * 
+	 *
 	 * @param driver Seleniumドライバ
 	 * @return 設問データ(年度と問題文のみ)
 	 */
@@ -162,10 +176,10 @@ public class Main {
 	 * @param driver Seleniumドライバ
 	 */
 	private static void next(WebDriver driver) {
-		
+
 		WebDriverWait wait =  new WebDriverWait(driver, Duration.ofSeconds(10));
 	    WebElement element=  wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(".bottomBtns > .submit")));
-	    element.click();		
+	    element.click();
 
 		Utils.await();
 	}
