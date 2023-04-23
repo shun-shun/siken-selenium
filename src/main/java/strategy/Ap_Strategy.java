@@ -134,7 +134,6 @@ public class Ap_Strategy implements Strategy {
 		} catch (IOException | CsvDataTypeMismatchException | CsvRequiredFieldEmptyException e) {
 			throw new RuntimeException(e);
 		}
-		System.out.println(AP_NUMBER_OF_QUESTIONS);
 	}
 
 	@Override

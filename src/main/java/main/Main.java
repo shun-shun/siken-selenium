@@ -27,6 +27,8 @@ public class Main {
 
 	/** 戦略群 */
 	private static Map<Integer, Strategy> strategies = new HashMap<>();
+	
+	private static String errorYear = "";
 
 	static {
 		// 応用の戦略
@@ -43,7 +45,7 @@ public class Main {
 		Strategy strategy = strategies.get(1);
 
 		List<String> select = new ArrayList<String>();
-		select.add("法務");
+		select.add("基礎理論");
 		strategy.init(select);
 
 		// ポリシーを組み立てる
@@ -58,6 +60,8 @@ public class Main {
 				execute(policy, driver, i);
 			} catch (NoSuchElementException e) {
 				// 取得できない場合は無視
+				System.out.println(errorYear);
+				e.printStackTrace();
 			}
 			// 次の問題へ
 			next(driver);
@@ -116,9 +120,17 @@ public class Main {
 
 		String year = driver.findElement(By.cssSelector(".main > div:nth-child(4)")).getText();
 		question.setYear(Utils.crlfToSpace(year));
+		errorYear = year;
 
 		String title = driver.findElement(By.cssSelector(".main > div:nth-child(3)")).getText();
 		question.setTitle(Utils.crlfToSpace(title));
+		
+		try {
+			String url = driver.findElement(By.cssSelector("#mainCol > div.main.kako.doujou > div:nth-child(3) > div > img")).getAttribute("src");
+			question.setUrl(url);
+		} catch(NoSuchElementException e) {
+			// 画像が見つからない場合は無視
+		}
 
 		return common(driver, question);
 	}
@@ -137,7 +149,13 @@ public class Main {
 
 		String title = driver.findElement(By.cssSelector(".main > div:nth-child(4)")).getText();
 		question.setTitle(Utils.crlfToSpace(title));
-
+		
+		try {
+			String url = driver.findElement(By.cssSelector("#mainCol > div.main.kako.doujou > div:nth-child(4) > div > img")).getAttribute("src");
+			question.setUrl(url);
+		} catch(NoSuchElementException e) {
+			// 画像が見つからない場合は無視
+		}
 		return common(driver, question);
 	}
 
@@ -148,25 +166,58 @@ public class Main {
 	 * @return 設問データ
 	 */
 	private static Question common(final WebDriver driver, Question question) {
+		
+		// 分類のテキストを抽出
+		String clazzP = driver.findElement(By.cssSelector("#mainCol > div.main.kako.doujou > p")).getText();
+		// 「»」以降の文字を削除
+		String clazz1 = clazzP.replaceAll("\\s».*", "");
+		question.setClazz1(clazz1);
+		// 先頭から最初の「»」までを削除し、「»」以降の文字を削除（中央の文字のみ抽出）
+		String clazz2 = clazzP.replaceAll("^.*?»\\s", "").replaceAll("\\s».*", "");
+		question.setClazz2(clazz2);
+		// 先頭から最後の「»」までを削除（最後の文字のみ抽出）
+		String clazz3 = clazzP.replaceAll("^.*»", "");
+		question.setClazz3(clazz3);
+		
+		// TODO 選択肢が画像の場合を考慮していない
+		try {
+			String divA = driver.findElement(By.id("select_a")).getText();
+			question.setA(Utils.crlfToSpace(divA));
+			String srcA = driver.findElement(By.id("select_a")).findElement(By.tagName("img")).getAttribute("src");
+			question.setUrlA(srcA);
+		} catch(NoSuchElementException e) {
+		}
 
-		String divA = driver.findElement(By.id("select_a")).getText();
-		question.setA(Utils.crlfToSpace(divA));
+		try {
+			String divI = driver.findElement(By.id("select_i")).getText();
+			question.setI(Utils.crlfToSpace(divI));
+			String srcI = driver.findElement(By.id("select_i")).findElement(By.tagName("img")).getAttribute("src");
+			question.setUrlI(srcI);
+		} catch(NoSuchElementException e) {
+		}
 
-		String divI = driver.findElement(By.id("select_i")).getText();
-		question.setI(Utils.crlfToSpace(divI));
+		try {
+			String divU = driver.findElement(By.id("select_u")).getText();
+			question.setU(Utils.crlfToSpace(divU));
+			String srcU = driver.findElement(By.id("select_u")).findElement(By.tagName("img")).getAttribute("src");
+			question.setUrlU(srcU);
+		} catch(NoSuchElementException e) {
+		}
 
-		String divU = driver.findElement(By.id("select_u")).getText();
-		question.setU(Utils.crlfToSpace(divU));
-
-		String divE = driver.findElement(By.id("select_e")).getText();
-		question.setE(Utils.crlfToSpace(divE));
-
-		Utils.await();
+		try {
+			String divE = driver.findElement(By.id("select_e")).getText();
+			question.setE(Utils.crlfToSpace(divE));
+			String srcE = driver.findElement(By.id("select_e")).findElement(By.tagName("img")).getAttribute("src");
+			question.setUrlE(srcE);
+		} catch(NoSuchElementException e) {
+		}
+		
 		driver.findElement(By.id("showAnswerBtn")).click();
+		Utils.await();
 
 		WebElement ans = driver.findElement(By.id("answerChar"));
 		SELECTION selection = SELECTION.toSelection(ans.getText());
-		question.setAns(selection);
+		question.setAns(selection.getValue());
 
 		return question;
 	}
