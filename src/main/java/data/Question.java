@@ -49,22 +49,26 @@ public class Question {
 	private String urlE;
 
 	@CsvBindByPosition(position = 10)
+	@CsvBindByName(column = "URL_Main", required = false)
+	private String urlMain;
+	
+	@CsvBindByPosition(position = 11)
 	@CsvBindByName(column = "ア", required = false)
 	private String a;
 
-	@CsvBindByPosition(position = 11)
+	@CsvBindByPosition(position = 12)
 	@CsvBindByName(column = "イ", required = false)
 	private String i;
 
-	@CsvBindByPosition(position = 12)
+	@CsvBindByPosition(position = 13)
 	@CsvBindByName(column = "ウ", required = false)
 	private String u;
 
-	@CsvBindByPosition(position = 13)
+	@CsvBindByPosition(position = 14)
 	@CsvBindByName(column = "エ", required = false)
 	private String e;
 
-	@CsvBindByPosition(position = 14)
+	@CsvBindByPosition(position = 15)
 	@CsvBindByName(column = "答え", required = true)
 	private String ans;
 	

@@ -19,8 +19,13 @@ import common.Utils;
 import data.Question;
 import data.Question.SELECTION;
 import strategy.Ap_Strategy;
+import strategy.Db_Strategy;
+import strategy.Fe_Strategy;
 import strategy.Ip_Strategy;
+import strategy.Nw_Strategy;
+import strategy.Pm_Strategy;
 import strategy.Sc_Strategy;
+import strategy.Sg_Strategy;
 import strategy.Strategy;
 
 public class Main {
@@ -28,6 +33,7 @@ public class Main {
 	/** 戦略群 */
 	private static Map<Integer, Strategy> strategies = new HashMap<>();
 	
+	/** 【デバッグ用】エラーが発生した問題の年度 */
 	private static String errorYear = "";
 
 	static {
@@ -37,6 +43,16 @@ public class Main {
 		strategies.put(2, new Sc_Strategy());
 		// iパスの戦略
 		strategies.put(3, new Ip_Strategy());
+		// 基本の戦略
+		strategies.put(4, new Fe_Strategy());
+		// 基本の戦略
+		strategies.put(5, new Sg_Strategy());
+		// 基本の戦略
+		strategies.put(6, new Pm_Strategy());
+		// 基本の戦略
+		strategies.put(7, new Nw_Strategy());
+		// 基本の戦略
+		strategies.put(8, new Db_Strategy());
 	}
 
 	public static void main(String[] args) {
@@ -45,7 +61,7 @@ public class Main {
 		Strategy strategy = strategies.get(1);
 
 		List<String> select = new ArrayList<String>();
-		select.add("基礎理論");
+		select.add("ハードウェア");
 		strategy.init(select);
 
 		// ポリシーを組み立てる
@@ -146,6 +162,7 @@ public class Main {
 
 		String year = driver.findElement(By.cssSelector(".main > div:nth-child(5)")).getText();
 		question.setYear(Utils.crlfToSpace(year));
+		errorYear = year;
 
 		String title = driver.findElement(By.cssSelector(".main > div:nth-child(4)")).getText();
 		question.setTitle(Utils.crlfToSpace(title));
@@ -179,39 +196,35 @@ public class Main {
 		String clazz3 = clazzP.replaceAll("^.*»", "");
 		question.setClazz3(clazz3);
 		
-		// TODO 選択肢が画像の場合を考慮していない
 		try {
-			String divA = driver.findElement(By.id("select_a")).getText();
-			question.setA(Utils.crlfToSpace(divA));
-			String srcA = driver.findElement(By.id("select_a")).findElement(By.tagName("img")).getAttribute("src");
-			question.setUrlA(srcA);
+			try {
+				// 選択肢がテキストの場合
+				String divA = driver.findElement(By.id("select_a")).getText();
+				question.setA(Utils.crlfToSpace(divA));
+				String divI = driver.findElement(By.id("select_i")).getText();
+				question.setI(Utils.crlfToSpace(divI));
+				String divU = driver.findElement(By.id("select_u")).getText();
+				question.setU(Utils.crlfToSpace(divU));
+				String divE = driver.findElement(By.id("select_e")).getText();
+				question.setE(Utils.crlfToSpace(divE));
+			} catch(NoSuchElementException e) {
+				//  選択肢が画像の場合（選択肢それぞれに画像の場合）
+				String srcA = driver.findElement(By.id("select_a")).findElement(By.tagName("img")).getAttribute("src");
+				question.setUrlA(srcA);
+				String srcI = driver.findElement(By.id("select_i")).findElement(By.tagName("img")).getAttribute("src");
+				question.setUrlI(srcI);
+				String srcU = driver.findElement(By.id("select_u")).findElement(By.tagName("img")).getAttribute("src");
+				question.setUrlU(srcU);
+				String srcE = driver.findElement(By.id("select_e")).findElement(By.tagName("img")).getAttribute("src");
+				question.setUrlE(srcE);
+			}	
 		} catch(NoSuchElementException e) {
-		}
-
-		try {
-			String divI = driver.findElement(By.id("select_i")).getText();
-			question.setI(Utils.crlfToSpace(divI));
-			String srcI = driver.findElement(By.id("select_i")).findElement(By.tagName("img")).getAttribute("src");
-			question.setUrlI(srcI);
-		} catch(NoSuchElementException e) {
-		}
-
-		try {
-			String divU = driver.findElement(By.id("select_u")).getText();
-			question.setU(Utils.crlfToSpace(divU));
-			String srcU = driver.findElement(By.id("select_u")).findElement(By.tagName("img")).getAttribute("src");
-			question.setUrlU(srcU);
-		} catch(NoSuchElementException e) {
-		}
-
-		try {
-			String divE = driver.findElement(By.id("select_e")).getText();
-			question.setE(Utils.crlfToSpace(divE));
-			String srcE = driver.findElement(By.id("select_e")).findElement(By.tagName("img")).getAttribute("src");
-			question.setUrlE(srcE);
-		} catch(NoSuchElementException e) {
+			//  選択肢が画像の場合（画像が１つだけの場合）
+			String srcMain = driver.findElement(By.className("selectList")).findElement(By.tagName("img")).getAttribute("src");
+			question.setUrlMain(srcMain);
 		}
 		
+		// 次の問題をクリック
 		driver.findElement(By.id("showAnswerBtn")).click();
 		Utils.await();
 

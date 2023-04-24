@@ -18,19 +18,16 @@ import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 import common.Utils;
 import data.Question;
 
-/**
- * 支援士の戦略
- */
-public class Sc_Strategy implements Strategy {
+public class Sg_Strategy implements Strategy {
 
 	/** アクセス先 */
-	private static final String URL = "https://www.sc-siken.com/sckakomon.php";
+	private static final String URL = "https://www.sg-siken.com/sckakomon.php";
 
 	/** 最大問題数 */
-	private static int SC_NUMBER_OF_QUESTIONS = 0;
+	private static int SG_NUMBER_OF_QUESTIONS = 0;
 
 	/** ファイル名 */
-	private static final String FILE_NAME = "sc.csv";
+	private static final String FILE_NAME = "sg.csv";
 
 	/** 表示項目 */
 	private static Map<String, String> span = new HashMap<>();
@@ -47,24 +44,32 @@ public class Sc_Strategy implements Strategy {
 		xPath.put("セキュリティ技術評価"," #sp_all > label:nth-child(3) > input[type=checkbox]");
 		xPath.put("情報セキュリティ対策"," #sp_all > label:nth-child(4) > input[type=checkbox]");
 		xPath.put("セキュリティ実装技術"," #sp_all > label:nth-child(5) > input[type=checkbox]");
-		xPath.put("データベース"," #other_all > label:nth-child(1) > input[type=checkbox]");
-		xPath.put("ネットワーク"," #other_all > label:nth-child(2) > input[type=checkbox]");
-		xPath.put("システム開発技術"," #other_all > label:nth-child(3) > input[type=checkbox]");
-		xPath.put("ソフトウェア開発管理技術"," #other_all > label:nth-child(4) > input[type=checkbox]");
-		xPath.put("サービスマネジメント"," #other_all > label:nth-child(5) > input[type=checkbox]");
-		xPath.put("システム監査"," #other_all > label:nth-child(6) > input[type=checkbox]");
+		xPath.put("法務"," #other_all > label:nth-child(1) > input[type=checkbox]");
+		xPath.put("システム構成要素"," #other_all > label:nth-child(2) > input[type=checkbox]");
+		xPath.put("データベース"," #other_all > label:nth-child(3) > input[type=checkbox]");
+		xPath.put("ネットワーク"," #other_all > label:nth-child(4) > input[type=checkbox]");
+		xPath.put("プロジェクトマネジメント"," #other_all > label:nth-child(5) > input[type=checkbox]");
+		xPath.put("サービスマネジメント"," #other_all > label:nth-child(6) > input[type=checkbox]");
+		xPath.put("システム監査"," #other_all > label:nth-child(7) > input[type=checkbox]");
+		xPath.put("システム戦略"," #other_all > label:nth-child(8) > input[type=checkbox]");
+		xPath.put("システム企画"," #other_all > label:nth-child(9) > input[type=checkbox]");
+		xPath.put("企業活動"," #other_all > label:nth-child(10) > input[type=checkbox]");
 		
 		span.put("情報セキュリティ"," #sp_all > label:nth-child(1) > span");
 		span.put("情報セキュリティ管理"," #sp_all > label:nth-child(2) > span");
 		span.put("セキュリティ技術評価"," #sp_all > label:nth-child(3) > span");
 		span.put("情報セキュリティ対策"," #sp_all > label:nth-child(4) > span");
 		span.put("セキュリティ実装技術"," #sp_all > label:nth-child(5) > span");
-		span.put("データベース"," #other_all > label:nth-child(1) > span");
-		span.put("ネットワーク"," #other_all > label:nth-child(2) > span");
-		span.put("システム開発技術"," #other_all > label:nth-child(3) > span");
-		span.put("ソフトウェア開発管理技術"," #other_all > label:nth-child(4) > span");
-		span.put("サービスマネジメント"," #other_all > label:nth-child(5) > span");
-		span.put("システム監査"," #other_all > label:nth-child(6) > span");
+		span.put("法務"," #other_all > label:nth-child(1) > span");
+		span.put("システム構成要素"," #other_all > label:nth-child(2) > span");
+		span.put("データベース"," #other_all > label:nth-child(3) > span");
+		span.put("ネットワーク"," #other_all > label:nth-child(4) > span");
+		span.put("プロジェクトマネジメント"," #other_all > label:nth-child(5) > span");
+		span.put("サービスマネジメント"," #other_all > label:nth-child(6) > span");
+		span.put("システム監査"," #other_all > label:nth-child(7) > span");
+		span.put("システム戦略"," #other_all > label:nth-child(8) > span");
+		span.put("システム企画"," #other_all > label:nth-child(9) > span");
+		span.put("企業活動"," #other_all > label:nth-child(10) > span");
 	}
 
 	@Override
@@ -89,7 +94,7 @@ public class Sc_Strategy implements Strategy {
 			// 問題数のみ抽出
 			String span = driver.findElement(By.cssSelector(keySpan)).getText();
 			// 問題数を加算
-			SC_NUMBER_OF_QUESTIONS += Integer.parseInt(span.replaceAll("^.*\\(", "").replaceAll("\\)$", ""));
+			SG_NUMBER_OF_QUESTIONS += Integer.parseInt(span.replaceAll("^.*\\(", "").replaceAll("\\)$", ""));
 
 			// チェックボックスのパスを抽出
 			String keyXPath = xPath.get(s);
@@ -113,7 +118,8 @@ public class Sc_Strategy implements Strategy {
 
 	@Override
 	public int getNumberOf() {
-		return SC_NUMBER_OF_QUESTIONS;
+		return SG_NUMBER_OF_QUESTIONS;
 	}
+
 
 }
