@@ -32,7 +32,7 @@ public class Main {
 
 	/** 戦略群 */
 	private static Map<Integer, Strategy> strategies = new HashMap<>();
-	
+
 	/** 【デバッグ用】エラーが発生した問題の年度 */
 	private static String errorYear = "";
 
@@ -61,7 +61,7 @@ public class Main {
 		Strategy strategy = strategies.get(1);
 
 		List<String> select = new ArrayList<String>();
-		select.add("ハードウェア");
+		select.add("アルゴリズムとプログラミング");
 		strategy.init(select);
 
 		// ポリシーを組み立てる
@@ -74,7 +74,7 @@ public class Main {
 		for (int i = 1; i <= policy.getNumberOf(); i++) {
 			try {
 				execute(policy, driver, i);
-			} catch (NoSuchElementException e) {
+			} catch (Exception e) {
 				// 取得できない場合は無視
 				System.out.println(errorYear);
 				e.printStackTrace();
@@ -90,6 +90,8 @@ public class Main {
 	private static WebDriver setOption() {
 		ChromeOptions options = new ChromeOptions();
 		options.addArguments("--remote-allow-origins=*");
+		final String UA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1 Safari/605.1.15";
+		options.addArguments("--user-agent=" + UA);
 		WebDriver driver = new ChromeDriver(options);
 		return driver;
 	}
@@ -140,7 +142,7 @@ public class Main {
 
 		String title = driver.findElement(By.cssSelector(".main > div:nth-child(3)")).getText();
 		question.setTitle(Utils.crlfToSpace(title));
-		
+
 		try {
 			String url = driver.findElement(By.cssSelector("#mainCol > div.main.kako.doujou > div:nth-child(3) > div > img")).getAttribute("src");
 			question.setUrl(url);
@@ -166,7 +168,7 @@ public class Main {
 
 		String title = driver.findElement(By.cssSelector(".main > div:nth-child(4)")).getText();
 		question.setTitle(Utils.crlfToSpace(title));
-		
+
 		try {
 			String url = driver.findElement(By.cssSelector("#mainCol > div.main.kako.doujou > div:nth-child(4) > div > img")).getAttribute("src");
 			question.setUrl(url);
@@ -183,7 +185,7 @@ public class Main {
 	 * @return 設問データ
 	 */
 	private static Question common(final WebDriver driver, Question question) {
-		
+
 		// 分類のテキストを抽出
 		String clazzP = driver.findElement(By.cssSelector("#mainCol > div.main.kako.doujou > p")).getText();
 		// 「»」以降の文字を削除
@@ -195,7 +197,7 @@ public class Main {
 		// 先頭から最後の「»」までを削除（最後の文字のみ抽出）
 		String clazz3 = clazzP.replaceAll("^.*»", "");
 		question.setClazz3(clazz3);
-		
+
 		try {
 			try {
 				// 選択肢がテキストの場合
@@ -217,21 +219,21 @@ public class Main {
 				question.setUrlU(srcU);
 				String srcE = driver.findElement(By.id("select_e")).findElement(By.tagName("img")).getAttribute("src");
 				question.setUrlE(srcE);
-			}	
+			}
 		} catch(NoSuchElementException e) {
 			//  選択肢が画像の場合（画像が１つだけの場合）
 			String srcMain = driver.findElement(By.className("selectList")).findElement(By.tagName("img")).getAttribute("src");
 			question.setUrlMain(srcMain);
 		}
-		
+
 		// 次の問題をクリック
+		Utils.await();
 		driver.findElement(By.id("showAnswerBtn")).click();
 		Utils.await();
 
 		WebElement ans = driver.findElement(By.id("answerChar"));
 		SELECTION selection = SELECTION.toSelection(ans.getText());
 		question.setAns(selection.getValue());
-
 		return question;
 	}
 

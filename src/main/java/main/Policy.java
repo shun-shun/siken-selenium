@@ -26,6 +26,7 @@ public class Policy {
 	 * @param driver Seleniumドライバ
 	 */
 	public void set(WebDriver driver) {
+		driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(10));
 		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
 		strategy.set(driver);
 	}

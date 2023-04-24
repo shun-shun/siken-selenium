@@ -4,7 +4,7 @@ package common;
  * 共通処理
  */
 public class Utils {
-	
+
 	/** 待ち時間(ミリ秒) */
 	private static final long WAIT_TIME_MILL = 1000;
 
@@ -21,7 +21,7 @@ public class Utils {
 			}
 		}
 	}
-	
+
 	/**
 	 * 文字列から改行コードを空白へ変換する
 	 * @param in 対象の文字列
