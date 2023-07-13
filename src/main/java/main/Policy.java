@@ -31,12 +31,21 @@ public class Policy {
 		strategy.init(driver);
 	}
 
+	/**
+	 * スクレイピング処理
+	 * @param driver Seleniumドライバ
+	 * @param url 問題へのURL
+	 */
 	public void execute(WebDriver driver, String url) {
 		Question question = strategy.execute(driver, url);
 		strategy.out(question);
 		return;
 	}
 
+	/**
+	 * URLリストの取得
+	 * @return 年度と問題数を組み合わせたURL
+	 */
 	public List<String> getItem() {
 		final String url = strategy.getUrl();
 		List<String> nendo = strategy.getNendo();

@@ -18,9 +18,9 @@ public interface Strategy {
 	public abstract void init(WebDriver driver);
 
 	/**
-	 * 
-	 * @param driver
-	 * @return
+	 * スクレイピング処理
+	 * @param driver Seleniumドライバ
+	 * @return 設問データ
 	 */
 	public abstract Question execute(WebDriver driver, String url);
 
@@ -30,10 +30,22 @@ public interface Strategy {
 	 */
 	public abstract void out(Question question);
 
+	/**
+	 * ベースURLの取得
+	 * @return url 問題のURL
+	 */
 	public abstract String getUrl();
 
+	/**
+	 * 年度配列を取得
+	 * @return 年度配列
+	 */
 	public abstract List<String> getNendo();
 
+	/**
+	 * 問題配列を取得
+	 * @return 問題配列
+	 */
 	public abstract List<String> getQuestionList();
 
 }

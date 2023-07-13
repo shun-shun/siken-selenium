@@ -23,7 +23,7 @@ import data.Question.SELECTION;
 /**
  * 応用の戦略
  */
-public class Ap_Strategy implements Strategy {
+public class ApStrategy implements Strategy {
 
 	/** アクセス先 */
 	private static final String URL = "https://www.ap-siken.com/kakomon/";
@@ -37,7 +37,7 @@ public class Ap_Strategy implements Strategy {
 	/** 問題番号 */
 	private List<String> questionList = new ArrayList<>();
 
-	public Ap_Strategy() {
+	public ApStrategy() {
 		nendo.add("05_haru");
 		nendo.add("04_aki");
 		nendo.add("04_haru");
@@ -167,15 +167,18 @@ public class Ap_Strategy implements Strategy {
 
 	@Override
 	public Question execute(WebDriver driver, String url) {
+		// 問題へアクセス
 		driver.get(url);
 		Utils.await();
 		Question question = new Question();
+		// URLの設定
+		question.setUrl(url);
+		// 問題の年度を抽出
 		String year = driver.findElement(By.cssSelector("#mainCol > div.main.kako > h2")).getText();
 		question.setYear(year);
 		// 分類のテキストを抽出
 		String q = driver.findElement(By.cssSelector("#mondai")).getText();
 		question.setTitle(q);
-		question.setUrl(url);
 		// 分類のテキストを抽出
 		String clazzP = driver.findElement(By.cssSelector("#mainCol > div.main.kako > p")).getText();
 		// 「»」以降の文字を削除

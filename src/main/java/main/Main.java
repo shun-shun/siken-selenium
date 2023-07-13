@@ -9,7 +9,7 @@ import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 
-import strategy.Ap_Strategy;
+import strategy.ApStrategy;
 import strategy.Strategy;
 
 public class Main {
@@ -19,7 +19,7 @@ public class Main {
 
 	static {
 		// 応用の戦略
-		strategies.put(1, new Ap_Strategy());
+		strategies.put(1, new ApStrategy());
 	}
 
 	public static void main(String[] args) {
