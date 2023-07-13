@@ -3,12 +3,13 @@ package strategy;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 
 import com.opencsv.bean.StatefulBeanToCsv;
 import com.opencsv.bean.StatefulBeanToCsvBuilder;
@@ -17,6 +18,7 @@ import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
 import common.Utils;
 import data.Question;
+import data.Question.SELECTION;
 
 /**
  * 応用の戦略
@@ -24,105 +26,132 @@ import data.Question;
 public class Ap_Strategy implements Strategy {
 
 	/** アクセス先 */
-	private static final String URL = "https://www.ap-siken.com/apkakomon.php";
-
-	/** 最大問題数 */
-	private static int AP_NUMBER_OF_QUESTIONS = 0;
+	private static final String URL = "https://www.ap-siken.com/kakomon/";
 
 	/** ファイル名 */
 	private static final String FILE_NAME = "ap.csv";
 
-	/** 表示項目 */
-	private static Map<String, String> span = new HashMap<>();
+	/** 年度 */
+	private List<String> nendo = new ArrayList<>();
 
-	/** 選択 */
-	private static Map<String,String> xPath = new HashMap<>();
+	/** 問題番号 */
+	private List<String> questionList = new ArrayList<>();
 
-	/** 選択項目 */
-	private List<String> select;
+	public Ap_Strategy() {
+		nendo.add("05_haru");
+		nendo.add("04_aki");
+		nendo.add("04_haru");
+		nendo.add("03_aki");
+		nendo.add("03_haru");
+		nendo.add("02_aki");
+		nendo.add("01_aki");
+		nendo.add("31_haru");
+		nendo.add("30_haru");
+		nendo.add("30_aki");
+		nendo.add("29_aki");
+		nendo.add("29_haru");
+		nendo.add("28_aki");
+		nendo.add("28_haru");
+		nendo.add("27_aki");
+		nendo.add("27_haru");
+		nendo.add("26_aki");
+		nendo.add("26_haru");
+		nendo.add("25_aki");
+		nendo.add("25_haru");
+		nendo.add("24_aki");
+		nendo.add("24_haru");
+		nendo.add("23_aki");
+		nendo.add("23_haru");
+		nendo.add("22_aki");
+		nendo.add("22_haru");
+		nendo.add("21_aki");
+		nendo.add("21_haru");
 
-	static {
-		xPath.put("基礎理論"," #te_all > label:nth-child(1) > input[type=checkbox]");
-		xPath.put("アルゴリズムとプログラミング"," #te_all > label:nth-child(2) > input[type=checkbox]");
-		xPath.put("コンピュータ構成要素"," #te_all > label:nth-child(3) > input[type=checkbox]");
-		xPath.put("システム構成要素"," #te_all > label:nth-child(4) > input[type=checkbox]");
-		xPath.put("ソフトウェア"," #te_all > label:nth-child(5) > input[type=checkbox]");
-		xPath.put("ハードウェア"," #te_all > label:nth-child(6) > input[type=checkbox]");
-		xPath.put("ヒューマンインタフェース"," #te_all > label:nth-child(7) > input[type=checkbox]");
-		xPath.put("マルチメディア"," #te_all > label:nth-child(8) > input[type=checkbox]");
-		xPath.put("データベース"," #te_all > label:nth-child(9) > input[type=checkbox]");
-		xPath.put("ネットワーク"," #te_all > label:nth-child(10) > input[type=checkbox]");
-		xPath.put("セキュリティ"," #te_all > label:nth-child(11) > input[type=checkbox]");
-		xPath.put("システム開発技術"," #te_all > label:nth-child(12) > input[type=checkbox]");
-		xPath.put("ソフトウェア開発管理技術"," #te_all > label:nth-child(13) > input[type=checkbox]");
-		xPath.put("プロジェクトマネジメント"," #ma_all > label:nth-child(1) > input[type=checkbox]");
-		xPath.put("サービスマネジメント"," #ma_all > label:nth-child(2) > input[type=checkbox]");
-		xPath.put("システム監査"," #ma_all > label:nth-child(3) > input[type=checkbox]");
-		xPath.put("システム戦略"," #st_all > label:nth-child(1) > input[type=checkbox]");
-		xPath.put("システム企画"," #st_all > label:nth-child(2) > input[type=checkbox]");
-		xPath.put("経営戦略マネジメント"," #st_all > label:nth-child(3) > input[type=checkbox]");
-		xPath.put("技術戦略マネジメント"," #st_all > label:nth-child(4) > input[type=checkbox]");
-		xPath.put("ビジネスインダストリ"," #st_all > label:nth-child(5) > input[type=checkbox]");
-		xPath.put("企業活動"," #st_all > label:nth-child(6) > input[type=checkbox]");
-		xPath.put("法務"," #st_all > label:nth-child(7) > input[type=checkbox]");
-
-		span.put("基礎理論"," #te_all > label:nth-child(1) > span");
-		span.put("アルゴリズムとプログラミング"," #te_all > label:nth-child(2) > span");
-		span.put("コンピュータ構成要素"," #te_all > label:nth-child(3) > span");
-		span.put("システム構成要素"," #te_all > label:nth-child(4) > span");
-		span.put("ソフトウェア"," #te_all > label:nth-child(5) > span");
-		span.put("ハードウェア"," #te_all > label:nth-child(6) > span");
-		span.put("ヒューマンインタフェース"," #te_all > label:nth-child(7) > span");
-		span.put("マルチメディア"," #te_all > label:nth-child(8) > span");
-		span.put("データベース"," #te_all > label:nth-child(9) > span");
-		span.put("ネットワーク"," #te_all > label:nth-child(10) > span");
-		span.put("セキュリティ"," #te_all > label:nth-child(11) > span");
-		span.put("システム開発技術"," #te_all > label:nth-child(12) > span");
-		span.put("ソフトウェア開発管理技術"," #te_all > label:nth-child(13) > span");
-		span.put("プロジェクトマネジメント"," #ma_all > label:nth-child(1) > span");
-		span.put("サービスマネジメント"," #ma_all > label:nth-child(2) > span");
-		span.put("システム監査"," #ma_all > label:nth-child(3) > span");
-		span.put("システム戦略"," #st_all > label:nth-child(1) > span");
-		span.put("システム企画"," #st_all > label:nth-child(2) > span");
-		span.put("経営戦略マネジメント"," #st_all > label:nth-child(3) > span");
-		span.put("技術戦略マネジメント"," #st_all > label:nth-child(4) > span");
-		span.put("ビジネスインダストリ"," #st_all > label:nth-child(5) > span");
-		span.put("企業活動"," #st_all > label:nth-child(6) > span");
-		span.put("法務"," #st_all > label:nth-child(7) > span");
+		questionList.add("/q1.html");
+		questionList.add("/q2.html");
+		questionList.add("/q3.html");
+		questionList.add("/q4.html");
+		questionList.add("/q5.html");
+		questionList.add("/q6.html");
+		questionList.add("/q7.html");
+		questionList.add("/q8.html");
+		questionList.add("/q9.html");
+		questionList.add("/q10.html");
+		questionList.add("/q11.html");
+		questionList.add("/q12.html");
+		questionList.add("/q13.html");
+		questionList.add("/q14.html");
+		questionList.add("/q15.html");
+		questionList.add("/q16.html");
+		questionList.add("/q17.html");
+		questionList.add("/q18.html");
+		questionList.add("/q19.html");
+		questionList.add("/q20.html");
+		questionList.add("/q21.html");
+		questionList.add("/q22.html");
+		questionList.add("/q23.html");
+		questionList.add("/q24.html");
+		questionList.add("/q25.html");
+		questionList.add("/q26.html");
+		questionList.add("/q27.html");
+		questionList.add("/q28.html");
+		questionList.add("/q29.html");
+		questionList.add("/q30.html");
+		questionList.add("/q31.html");
+		questionList.add("/q32.html");
+		questionList.add("/q33.html");
+		questionList.add("/q34.html");
+		questionList.add("/q35.html");
+		questionList.add("/q36.html");
+		questionList.add("/q37.html");
+		questionList.add("/q38.html");
+		questionList.add("/q39.html");
+		questionList.add("/q40.html");
+		questionList.add("/q41.html");
+		questionList.add("/q42.html");
+		questionList.add("/q43.html");
+		questionList.add("/q44.html");
+		questionList.add("/q45.html");
+		questionList.add("/q46.html");
+		questionList.add("/q47.html");
+		questionList.add("/q48.html");
+		questionList.add("/q49.html");
+		questionList.add("/q50.html");
+		questionList.add("/q51.html");
+		questionList.add("/q52.html");
+		questionList.add("/q53.html");
+		questionList.add("/q54.html");
+		questionList.add("/q55.html");
+		questionList.add("/q56.html");
+		questionList.add("/q57.html");
+		questionList.add("/q58.html");
+		questionList.add("/q59.html");
+		questionList.add("/q60.html");
+		questionList.add("/q61.html");
+		questionList.add("/q62.html");
+		questionList.add("/q63.html");
+		questionList.add("/q64.html");
+		questionList.add("/q65.html");
+		questionList.add("/q66.html");
+		questionList.add("/q67.html");
+		questionList.add("/q68.html");
+		questionList.add("/q69.html");
+		questionList.add("/q70.html");
+		questionList.add("/q71.html");
+		questionList.add("/q72.html");
+		questionList.add("/q73.html");
+		questionList.add("/q74.html");
+		questionList.add("/q75.html");
+		questionList.add("/q76.html");
+		questionList.add("/q77.html");
+		questionList.add("/q78.html");
+		questionList.add("/q79.html");
+		questionList.add("/q80.html");
 	}
 
 	@Override
-	public void init(List<String> select) {
-		this.select = select;
-	}
-
-	@Override
-	public void set(WebDriver driver) {
+	public void init(WebDriver driver) {
 		driver.get(URL);
-		Utils.await();
-		// 分野タブを選択
-		driver.findElement(By.cssSelector("#tabs > ul > li:nth-child(2) > a")).click();
-		Utils.await();
-		// 全項目チェックをOFF
-		driver.findElement(By.cssSelector("#bunya > div.check_all_wrap > button:nth-child(2)")).click();
-		Utils.await();
-
-		for(String s: select) {
-			// 表示項目のパスを抽出
-			String keySpan = span.get(s);
-			// 問題数のみ抽出
-			String span = driver.findElement(By.cssSelector(keySpan)).getText();
-			// 問題数を加算
-			AP_NUMBER_OF_QUESTIONS += Integer.parseInt(span.replaceAll("^.*\\(", "").replaceAll("\\)$", ""));
-
-			// チェックボックスのパスを抽出
-			String keyXPath = xPath.get(s);
-			// チェックボックをクリック
-			driver.findElement(By.cssSelector(keyXPath)).click();
-			Utils.await();
-		}
-
-		driver.findElement(By.cssSelector(".submit")).click();
 		Utils.await();
 	}
 
@@ -137,8 +166,83 @@ public class Ap_Strategy implements Strategy {
 	}
 
 	@Override
-	public int getNumberOf() {
-		return AP_NUMBER_OF_QUESTIONS;
+	public Question execute(WebDriver driver, String url) {
+		driver.get(url);
+		Utils.await();
+		Question question = new Question();
+		// 分類のテキストを抽出
+		String q = driver.findElement(By.cssSelector("#mondai")).getText();
+		question.setTitle(q);
+		question.setUrl(url);
+		// 分類のテキストを抽出
+		String clazzP = driver.findElement(By.cssSelector("#mainCol > div.main.kako > p")).getText();
+		// 「»」以降の文字を削除
+		String clazz1 = clazzP.replaceAll("\\s».*", "");
+		question.setClazz1(clazz1);
+		// 先頭から最初の「»」までを削除し、「»」以降の文字を削除（中央の文字のみ抽出）
+		String clazz2 = clazzP.replaceAll("^.*?»\\s", "").replaceAll("\\s».*", "");
+		question.setClazz2(clazz2);
+		// 先頭から最後の「»」までを削除（最後の文字のみ抽出）
+		String clazz3 = clazzP.replaceAll("^.*»", "");
+		question.setClazz3(clazz3);
+
+		try {
+			try {
+				// 選択肢がテキストの場合
+				String divA = driver.findElement(By.id("select_a")).getText();
+				question.setA(Utils.crlfToSpace(divA));
+				String divI = driver.findElement(By.id("select_i")).getText();
+				question.setI(Utils.crlfToSpace(divI));
+				String divU = driver.findElement(By.id("select_u")).getText();
+				question.setU(Utils.crlfToSpace(divU));
+				String divE = driver.findElement(By.id("select_e")).getText();
+				question.setE(Utils.crlfToSpace(divE));
+			} catch (NoSuchElementException e) {
+				//  選択肢が画像の場合（選択肢それぞれに画像の場合）
+				String srcA = driver.findElement(By.id("select_a")).findElement(By.tagName("img")).getAttribute("src");
+				question.setUrlA(srcA);
+				String srcI = driver.findElement(By.id("select_i")).findElement(By.tagName("img")).getAttribute("src");
+				question.setUrlI(srcI);
+				String srcU = driver.findElement(By.id("select_u")).findElement(By.tagName("img")).getAttribute("src");
+				question.setUrlU(srcU);
+				String srcE = driver.findElement(By.id("select_e")).findElement(By.tagName("img")).getAttribute("src");
+				question.setUrlE(srcE);
+			}
+		} catch (NoSuchElementException e) {
+			//  選択肢が画像の場合（画像が１つだけの場合）
+			String srcMain = driver.findElement(By.className("selectList")).findElement(By.tagName("img"))
+					.getAttribute("src");
+			question.setUrlMain(srcMain);
+		}
+
+		// 次の問題をクリック
+		Utils.await();
+		driver.findElement(By.id("showAnswerBtn")).click();
+		Utils.await();
+
+		try {
+			WebElement ans = driver.findElement(By.id("answerChar"));
+			SELECTION selection = SELECTION.toSelection(ans.getText());
+			question.setAns(selection.getValue());
+		} catch (NoSuchElementException e) {
+			// 何もしない
+			System.err.println(question.getTitle());
+		}
+		return question;
+	}
+
+	public String getUrl() {
+		return URL;
+	}
+
+	@Override
+	public List<String> getNendo() {
+		return this.nendo;
+	}
+
+	@Override
+	public List<String> getQuestionList() {
+		return this.questionList;
 	}
 
 }

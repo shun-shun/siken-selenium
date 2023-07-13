@@ -12,16 +12,17 @@ import data.Question;
 public interface Strategy {
 
 	/**
-	 * 初期化処理
-	 * @param span
-	 */
-	public abstract void init(List<String> select);
-
-	/**
 	 * 設定処理
 	 * @param driver Seleniumドライバ
 	 */
-	public abstract void set(WebDriver driver);
+	public abstract void init(WebDriver driver);
+
+	/**
+	 * 
+	 * @param driver
+	 * @return
+	 */
+	public abstract Question execute(WebDriver driver, String url);
 
 	/**
 	 * 出力処理
@@ -29,9 +30,10 @@ public interface Strategy {
 	 */
 	public abstract void out(Question question);
 
-	/**
-	 * 最大問題数の取得
-	 * @return 最大問題数
-	 */
-	public abstract int getNumberOf();
+	public abstract String getUrl();
+
+	public abstract List<String> getNendo();
+
+	public abstract List<String> getQuestionList();
+
 }

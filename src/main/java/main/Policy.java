@@ -1,6 +1,8 @@
 package main;
 
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.openqa.selenium.WebDriver;
 
@@ -19,31 +21,32 @@ public class Policy {
 		this.strategy = strategy;
 	}
 
-
-
 	/**
 	 * 初期化処理
 	 * @param driver Seleniumドライバ
 	 */
-	public void set(WebDriver driver) {
+	public void init(WebDriver driver) {
 		driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(10));
 		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
-		strategy.set(driver);
+		strategy.init(driver);
 	}
 
-	/**
-	 * 出力処理
-	 * @param question 設問データ
-	 */
-	public void out(Question question) {
+	public void execute(WebDriver driver, String url) {
+		Question question = strategy.execute(driver, url);
 		strategy.out(question);
+		return;
 	}
 
-	/**
-	 * 設問の最大問題数を取得
-	 * @return 最大問題数
-	 */
-	public int getNumberOf() {
-		return strategy.getNumberOf();
+	public List<String> getItem() {
+		final String url = strategy.getUrl();
+		List<String> nendo = strategy.getNendo();
+		List<String> question = strategy.getQuestionList();
+		List<String> item = new ArrayList<>();
+		for (String n : nendo) {
+			for (String q : question) {
+				item.add(url + n + q);
+			}
+		}
+		return item;
 	}
 }
