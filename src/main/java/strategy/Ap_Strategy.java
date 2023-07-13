@@ -170,6 +170,8 @@ public class Ap_Strategy implements Strategy {
 		driver.get(url);
 		Utils.await();
 		Question question = new Question();
+		String year = driver.findElement(By.cssSelector("#mainCol > div.main.kako > h2")).getText();
+		question.setYear(year);
 		// 分類のテキストを抽出
 		String q = driver.findElement(By.cssSelector("#mondai")).getText();
 		question.setTitle(q);

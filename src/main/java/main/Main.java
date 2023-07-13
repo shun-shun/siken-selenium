@@ -1,9 +1,11 @@
 package main;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 
@@ -31,8 +33,15 @@ public class Main {
 
 		List<String> item = policy.getItem();
 		for (String url : item) {
-			// 実行
-			policy.execute(driver, url);
+			while(true) {
+				try {
+					// 実行
+					policy.execute(driver, url);
+					break;
+				} catch(TimeoutException e) {
+					continue;
+				}
+			}
 		}
 		// Seleniumドライバの終了
 		driver.quit();
@@ -41,6 +50,11 @@ public class Main {
 	private static WebDriver setOption() {
 		System.setProperty("webdriver.chrome.driver", "C:\\free\\chromedriver.exe");
 		WebDriver driver = new ChromeDriver();
+		
+		//要素が見つからない場合最大で20秒間待つよう指定
+	    Duration waitTime = Duration.ofSeconds(20);
+	    driver.manage().timeouts().pageLoadTimeout(waitTime);
+	    driver.manage().timeouts().implicitlyWait(waitTime);
 		return driver;
 	}
 
