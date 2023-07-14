@@ -10,6 +10,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 
 import strategy.ApStrategy;
+import strategy.FeStrategy;
 import strategy.Strategy;
 
 public class Main {
@@ -20,12 +21,13 @@ public class Main {
 	static {
 		// 応用の戦略
 		strategies.put(1, new ApStrategy());
+		strategies.put(2, new FeStrategy());
 	}
 
 	public static void main(String[] args) {
 		int input = getArgument(args);
 		// ポリシーを組み立てる
-		Policy policy = new Policy(strategies.get(1));
+		Policy policy = new Policy(strategies.get(2));
 		// Seleniumドライバの生成
 		WebDriver driver = setOption();
 		// 戦略ごとに初期化
@@ -33,12 +35,12 @@ public class Main {
 
 		List<String> item = policy.getItem();
 		for (String url : item) {
-			while(true) {
+			while (true) {
 				try {
 					// 実行
 					policy.execute(driver, url);
 					break;
-				} catch(TimeoutException e) {
+				} catch (TimeoutException e) {
 					continue;
 				}
 			}
@@ -50,11 +52,11 @@ public class Main {
 	private static WebDriver setOption() {
 		System.setProperty("webdriver.chrome.driver", "C:\\free\\chromedriver.exe");
 		WebDriver driver = new ChromeDriver();
-		
+
 		//要素が見つからない場合最大で20秒間待つよう指定
-	    Duration waitTime = Duration.ofSeconds(20);
-	    driver.manage().timeouts().pageLoadTimeout(waitTime);
-	    driver.manage().timeouts().implicitlyWait(waitTime);
+		Duration waitTime = Duration.ofSeconds(20);
+		driver.manage().timeouts().pageLoadTimeout(waitTime);
+		driver.manage().timeouts().implicitlyWait(waitTime);
 		return driver;
 	}
 

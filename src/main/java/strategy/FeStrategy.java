@@ -20,16 +20,13 @@ import common.Utils;
 import data.Question;
 import data.Question.SELECTION;
 
-/**
- * 応用の戦略
- */
-public class ApStrategy implements Strategy {
+public class FeStrategy implements Strategy {
 
 	/** アクセス先 */
-	private static final String URL = "https://www.ap-siken.com/kakomon/";
+	private static final String URL = "https://www.fe-siken.com/kakomon/";
 
 	/** ファイル名 */
-	private static final String FILE_NAME = "ap.csv";
+	private static final String FILE_NAME = "fe.csv";
 
 	/** 年度 */
 	private List<String> nendo = new ArrayList<>();
@@ -37,19 +34,15 @@ public class ApStrategy implements Strategy {
 	/** 問題番号 */
 	private List<String> questionList = new ArrayList<>();
 
-	public ApStrategy() {
-		nendo.add("05_haru");
-		nendo.add("04_aki");
-		nendo.add("04_haru");
-		nendo.add("03_aki");
-		nendo.add("03_haru");
-		nendo.add("02_aki");
-		nendo.add("01_aki");
-		nendo.add("31_haru");
-		nendo.add("30_haru");
-		nendo.add("30_aki");
-		nendo.add("29_aki");
-		nendo.add("29_haru");
+	public FeStrategy() {
+		//		nendo.add("03_menjo");
+		//		nendo.add("02_menjo");
+		//		nendo.add("01_aki");
+		//		nendo.add("31_haru");
+		//		nendo.add("30_haru");
+		//		nendo.add("30_aki");
+		//		nendo.add("29_aki");
+		//		nendo.add("29_haru");
 		nendo.add("28_aki");
 		nendo.add("28_haru");
 		nendo.add("27_aki");
@@ -229,7 +222,7 @@ public class ApStrategy implements Strategy {
 			WebElement ans = driver.findElement(By.id("answerChar"));
 			SELECTION selection = SELECTION.toSelection(ans.getText());
 			question.setAns(selection.getValue());
-		} catch (NoSuchElementException e) {
+		} catch (NoSuchElementException | IllegalArgumentException e) {
 			// 何もしない
 			System.err.println(question.getTitle());
 		}
