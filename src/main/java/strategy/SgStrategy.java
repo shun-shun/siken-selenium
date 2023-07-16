@@ -16,16 +16,13 @@ import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 import common.Utils;
 import data.Question;
 
-/**
- * 応用の戦略
- */
-public class ApStrategy implements Strategy {
+public class SgStrategy implements Strategy {
 
 	/** アクセス先 */
-	private static final String URL = "https://www.ap-siken.com/kakomon/";
+	private static final String URL = "https://www.sg-siken.com/kakomon/";
 
 	/** ファイル名 */
-	private static final String FILE_NAME = "ap.csv";
+	private static final String FILE_NAME = "sg.csv";
 
 	/** 年度 */
 	private List<String> nendo = new ArrayList<>();
@@ -33,13 +30,8 @@ public class ApStrategy implements Strategy {
 	/** 問題番号 */
 	private List<String> questionList = new ArrayList<>();
 
-	public ApStrategy() {
-		nendo.add("05_haru");
-		nendo.add("04_aki");
-		nendo.add("04_haru");
-		nendo.add("03_aki");
-		nendo.add("03_haru");
-		nendo.add("02_aki");
+	public SgStrategy() {
+//		nendo.add("sample");
 		nendo.add("01_aki");
 		nendo.add("31_haru");
 		nendo.add("30_haru");
@@ -48,20 +40,6 @@ public class ApStrategy implements Strategy {
 		nendo.add("29_haru");
 		nendo.add("28_aki");
 		nendo.add("28_haru");
-		nendo.add("27_aki");
-		nendo.add("27_haru");
-		nendo.add("26_aki");
-		nendo.add("26_haru");
-		nendo.add("25_aki");
-		nendo.add("25_haru");
-		nendo.add("24_aki");
-		nendo.add("24_haru");
-		nendo.add("23_aki");
-		nendo.add("23_toku");
-		nendo.add("22_aki");
-		nendo.add("22_haru");
-		nendo.add("21_aki");
-		nendo.add("21_haru");
 
 		questionList.add("/q1.html");
 		questionList.add("/q2.html");
@@ -113,36 +91,7 @@ public class ApStrategy implements Strategy {
 		questionList.add("/q48.html");
 		questionList.add("/q49.html");
 		questionList.add("/q50.html");
-		questionList.add("/q51.html");
-		questionList.add("/q52.html");
-		questionList.add("/q53.html");
-		questionList.add("/q54.html");
-		questionList.add("/q55.html");
-		questionList.add("/q56.html");
-		questionList.add("/q57.html");
-		questionList.add("/q58.html");
-		questionList.add("/q59.html");
-		questionList.add("/q60.html");
-		questionList.add("/q61.html");
-		questionList.add("/q62.html");
-		questionList.add("/q63.html");
-		questionList.add("/q64.html");
-		questionList.add("/q65.html");
-		questionList.add("/q66.html");
-		questionList.add("/q67.html");
-		questionList.add("/q68.html");
-		questionList.add("/q69.html");
-		questionList.add("/q70.html");
-		questionList.add("/q71.html");
-		questionList.add("/q72.html");
-		questionList.add("/q73.html");
-		questionList.add("/q74.html");
-		questionList.add("/q75.html");
-		questionList.add("/q76.html");
-		questionList.add("/q77.html");
-		questionList.add("/q78.html");
-		questionList.add("/q79.html");
-		questionList.add("/q80.html");
+		
 	}
 
 	@Override

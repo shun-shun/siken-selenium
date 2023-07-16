@@ -12,7 +12,7 @@ public class Utils {
 	 * ランダムで待ち時間を設定
 	 */
 	public static void await() {
-		final int target = (int) (Math.random() * 10) + 1;
+		final int target = (int) (Math.random() * 5) + 1;
 		for (int i = 0; i < target; i++) {
 			try {
 				Thread.sleep(WAIT_TIME_MILL);

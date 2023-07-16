@@ -16,16 +16,12 @@ import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 import common.Utils;
 import data.Question;
 
-/**
- * 応用の戦略
- */
-public class ApStrategy implements Strategy {
-
+public class ItpStrategy implements Strategy {
 	/** アクセス先 */
-	private static final String URL = "https://www.ap-siken.com/kakomon/";
+	private static final String URL = "https://www.itpassportsiken.com/kakomon/";
 
 	/** ファイル名 */
-	private static final String FILE_NAME = "ap.csv";
+	private static final String FILE_NAME = "itp.csv";
 
 	/** 年度 */
 	private List<String> nendo = new ArrayList<>();
@@ -33,21 +29,19 @@ public class ApStrategy implements Strategy {
 	/** 問題番号 */
 	private List<String> questionList = new ArrayList<>();
 
-	public ApStrategy() {
-		nendo.add("05_haru");
-		nendo.add("04_aki");
-		nendo.add("04_haru");
-		nendo.add("03_aki");
-		nendo.add("03_haru");
-		nendo.add("02_aki");
-		nendo.add("01_aki");
-		nendo.add("31_haru");
-		nendo.add("30_haru");
-		nendo.add("30_aki");
-		nendo.add("29_aki");
-		nendo.add("29_haru");
-		nendo.add("28_aki");
-		nendo.add("28_haru");
+	public ItpStrategy() {
+//		nendo.add("05_haru");
+//		nendo.add("04_haru");
+//		nendo.add("03_haru");
+//		nendo.add("02_aki");
+//		nendo.add("01_aki");
+//		nendo.add("31_haru");
+//		nendo.add("30_aki");
+//		nendo.add("30_haru");
+//		nendo.add("29_aki");
+//		nendo.add("29_haru");
+//		nendo.add("28_aki");
+//		nendo.add("28_haru");
 		nendo.add("27_aki");
 		nendo.add("27_haru");
 		nendo.add("26_aki");
@@ -56,12 +50,12 @@ public class ApStrategy implements Strategy {
 		nendo.add("25_haru");
 		nendo.add("24_aki");
 		nendo.add("24_haru");
-		nendo.add("23_aki");
-		nendo.add("23_toku");
-		nendo.add("22_aki");
-		nendo.add("22_haru");
-		nendo.add("21_aki");
-		nendo.add("21_haru");
+//		nendo.add("23_aki");
+//		nendo.add("23_toku");
+//		nendo.add("22_aki");
+//		nendo.add("22_haru");
+//		nendo.add("21_aki");
+//		nendo.add("21_haru");
 
 		questionList.add("/q1.html");
 		questionList.add("/q2.html");
@@ -143,6 +137,26 @@ public class ApStrategy implements Strategy {
 		questionList.add("/q78.html");
 		questionList.add("/q79.html");
 		questionList.add("/q80.html");
+		questionList.add("/q81.html");
+		questionList.add("/q82.html");
+		questionList.add("/q83.html");
+		questionList.add("/q84.html");
+//		questionList.add("/q85.html");
+//		questionList.add("/q86.html");
+//		questionList.add("/q87.html");
+//		questionList.add("/q88.html");
+//		questionList.add("/q89.html");
+//		questionList.add("/q90.html");
+//		questionList.add("/q91.html");
+//		questionList.add("/q92.html");
+//		questionList.add("/q93.html");
+//		questionList.add("/q94.html");
+//		questionList.add("/q95.html");
+//		questionList.add("/q96.html");
+//		questionList.add("/q97.html");
+//		questionList.add("/q98.html");
+//		questionList.add("/q99.html");
+//		questionList.add("/q100.html");
 	}
 
 	@Override

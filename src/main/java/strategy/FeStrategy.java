@@ -6,10 +6,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 
 import com.opencsv.bean.StatefulBeanToCsv;
 import com.opencsv.bean.StatefulBeanToCsvBuilder;
@@ -18,7 +15,6 @@ import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
 import common.Utils;
 import data.Question;
-import data.Question.SELECTION;
 
 public class FeStrategy implements Strategy {
 
@@ -35,14 +31,14 @@ public class FeStrategy implements Strategy {
 	private List<String> questionList = new ArrayList<>();
 
 	public FeStrategy() {
-		//		nendo.add("03_menjo");
-		//		nendo.add("02_menjo");
-		//		nendo.add("01_aki");
-		//		nendo.add("31_haru");
-		//		nendo.add("30_haru");
-		//		nendo.add("30_aki");
-		//		nendo.add("29_aki");
-		//		nendo.add("29_haru");
+		nendo.add("03_menjo");
+		nendo.add("02_menjo");
+		nendo.add("01_aki");
+		nendo.add("31_haru");
+		nendo.add("30_haru");
+		nendo.add("30_aki");
+		nendo.add("29_aki");
+		nendo.add("29_haru");
 		nendo.add("28_aki");
 		nendo.add("28_haru");
 		nendo.add("27_aki");
@@ -54,7 +50,7 @@ public class FeStrategy implements Strategy {
 		nendo.add("24_aki");
 		nendo.add("24_haru");
 		nendo.add("23_aki");
-		nendo.add("23_haru");
+		nendo.add("23_toku");
 		nendo.add("22_aki");
 		nendo.add("22_haru");
 		nendo.add("21_aki");
@@ -156,77 +152,6 @@ public class FeStrategy implements Strategy {
 		} catch (IOException | CsvDataTypeMismatchException | CsvRequiredFieldEmptyException e) {
 			throw new RuntimeException(e);
 		}
-	}
-
-	@Override
-	public Question execute(WebDriver driver, String url) {
-		// 問題へアクセス
-		driver.get(url);
-		Utils.await();
-		Question question = new Question();
-		// URLの設定
-		question.setUrl(url);
-		// 問題の年度を抽出
-		String year = driver.findElement(By.cssSelector("#mainCol > div.main.kako > h2")).getText();
-		question.setYear(year);
-		// 分類のテキストを抽出
-		String q = driver.findElement(By.cssSelector("#mondai")).getText();
-		question.setTitle(Utils.crlfToSpace(q));
-		// 分類のテキストを抽出
-		String clazzP = driver.findElement(By.cssSelector("#mainCol > div.main.kako > p")).getText();
-		// 「»」以降の文字を削除
-		String clazz1 = clazzP.replaceAll("\\s».*", "");
-		question.setClazz1(clazz1);
-		// 先頭から最初の「»」までを削除し、「»」以降の文字を削除（中央の文字のみ抽出）
-		String clazz2 = clazzP.replaceAll("^.*?»\\s", "").replaceAll("\\s».*", "");
-		question.setClazz2(clazz2);
-		// 先頭から最後の「»」までを削除（最後の文字のみ抽出）
-		String clazz3 = clazzP.replaceAll("^.*»", "");
-		question.setClazz3(clazz3);
-
-		try {
-			try {
-				// 選択肢がテキストの場合
-				String divA = driver.findElement(By.id("select_a")).getText();
-				question.setA(Utils.crlfToSpace(divA));
-				String divI = driver.findElement(By.id("select_i")).getText();
-				question.setI(Utils.crlfToSpace(divI));
-				String divU = driver.findElement(By.id("select_u")).getText();
-				question.setU(Utils.crlfToSpace(divU));
-				String divE = driver.findElement(By.id("select_e")).getText();
-				question.setE(Utils.crlfToSpace(divE));
-			} catch (NoSuchElementException e) {
-				//  選択肢が画像の場合（選択肢それぞれに画像の場合）
-				String srcA = driver.findElement(By.id("select_a")).findElement(By.tagName("img")).getAttribute("src");
-				question.setUrlA(srcA);
-				String srcI = driver.findElement(By.id("select_i")).findElement(By.tagName("img")).getAttribute("src");
-				question.setUrlI(srcI);
-				String srcU = driver.findElement(By.id("select_u")).findElement(By.tagName("img")).getAttribute("src");
-				question.setUrlU(srcU);
-				String srcE = driver.findElement(By.id("select_e")).findElement(By.tagName("img")).getAttribute("src");
-				question.setUrlE(srcE);
-			}
-		} catch (NoSuchElementException e) {
-			//  選択肢が画像の場合（画像が１つだけの場合）
-			String srcMain = driver.findElement(By.className("selectList")).findElement(By.tagName("img"))
-					.getAttribute("src");
-			question.setUrlMain(srcMain);
-		}
-
-		// 次の問題をクリック
-		Utils.await();
-		driver.findElement(By.id("showAnswerBtn")).click();
-		Utils.await();
-
-		try {
-			WebElement ans = driver.findElement(By.id("answerChar"));
-			SELECTION selection = SELECTION.toSelection(ans.getText());
-			question.setAns(selection.getValue());
-		} catch (NoSuchElementException | IllegalArgumentException e) {
-			// 何もしない
-			System.err.println(question.getTitle());
-		}
-		return question;
 	}
 
 	public String getUrl() {

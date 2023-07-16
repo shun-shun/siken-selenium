@@ -18,13 +18,6 @@ public interface Strategy {
 	public abstract void init(WebDriver driver);
 
 	/**
-	 * スクレイピング処理
-	 * @param driver Seleniumドライバ
-	 * @return 設問データ
-	 */
-	public abstract Question execute(WebDriver driver, String url);
-
-	/**
 	 * 出力処理
 	 * @param question 設問データ
 	 */

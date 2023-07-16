@@ -11,6 +11,8 @@ import org.openqa.selenium.chrome.ChromeDriver;
 
 import strategy.ApStrategy;
 import strategy.FeStrategy;
+import strategy.ItpStrategy;
+import strategy.SgStrategy;
 import strategy.Strategy;
 
 public class Main {
@@ -22,18 +24,22 @@ public class Main {
 		// 応用の戦略
 		strategies.put(1, new ApStrategy());
 		strategies.put(2, new FeStrategy());
+		strategies.put(3, new SgStrategy());
+		strategies.put(4, new ItpStrategy());
 	}
 
 	public static void main(String[] args) {
 		int input = getArgument(args);
 		// ポリシーを組み立てる
-		Policy policy = new Policy(strategies.get(2));
+		Policy policy = new Policy(strategies.get(4));
 		// Seleniumドライバの生成
 		WebDriver driver = setOption();
 		// 戦略ごとに初期化
 		policy.init(driver);
 
+		double start = System.nanoTime();
 		List<String> item = policy.getItem();
+		int i = 1;
 		for (String url : item) {
 			while (true) {
 				try {
@@ -44,6 +50,8 @@ public class Main {
 					continue;
 				}
 			}
+			double end = System.nanoTime();
+			System.out.println("全体：" + item.size() + " 現在：" + i++ + " 処理時間：" + ((end - start) / Math.pow(10, 9))  + "s");
 		}
 		// Seleniumドライバの終了
 		driver.quit();
