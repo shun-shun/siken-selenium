@@ -10,8 +10,12 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 
 import strategy.ApStrategy;
+import strategy.CoStrategy;
+import strategy.DbStrategy;
 import strategy.FeStrategy;
 import strategy.ItpStrategy;
+import strategy.NwStrategy;
+import strategy.ScStrategy;
 import strategy.SgStrategy;
 import strategy.Strategy;
 
@@ -26,12 +30,16 @@ public class Main {
 		strategies.put(2, new FeStrategy());
 		strategies.put(3, new SgStrategy());
 		strategies.put(4, new ItpStrategy());
+		strategies.put(5, new ScStrategy());
+		strategies.put(6, new CoStrategy());
+		strategies.put(7, new DbStrategy());
+		strategies.put(8, new NwStrategy());
 	}
 
 	public static void main(String[] args) {
 		int input = getArgument(args);
 		// ポリシーを組み立てる
-		Policy policy = new Policy(strategies.get(4));
+		Policy policy = new Policy(strategies.get(8));
 		// Seleniumドライバの生成
 		WebDriver driver = setOption();
 		// 戦略ごとに初期化
@@ -51,7 +59,9 @@ public class Main {
 				}
 			}
 			double end = System.nanoTime();
-			System.out.println("全体：" + item.size() + " 現在：" + i++ + " 処理時間：" + ((end - start) / Math.pow(10, 9))  + "s");
+			double time = (end - start) / Math.pow(10, 9);
+			double timeLeft = (item.size() - i) * (time / i);
+			System.out.println("全体：" + item.size() + " 現在：" + i++ + " 処理時間：" + time  + "s " + " 残り時間：" + timeLeft);
 		}
 		// Seleniumドライバの終了
 		driver.quit();

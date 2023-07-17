@@ -57,12 +57,24 @@ public class Policy {
 		// 問題の年度を抽出
 		String year = driver.findElement(By.cssSelector("#mainCol > div.main.kako > h2")).getText();
 		question.setYear(year);
-		// 分類のテキストを抽出
+		// 問題文を抽出
 		String q;
 		try {
 			q = driver.findElement(By.cssSelector("#mondai")).getText();
 		} catch(NoSuchElementException e) {
-			q = driver.findElement(By.cssSelector("#mainCol > div.main.kako > div:nth-child(4)")).getText();
+			try {
+				q = driver.findElement(By.cssSelector("#mainCol > div.main.kako > div:nth-child(4)")).getText();
+			} catch (NoSuchElementException ex) {
+				try {
+					q = driver.findElement(By.cssSelector("#mainCol > div.main.kako > article")).getText();
+				} catch(NoSuchElementException exc) {
+					try {
+						q = driver.findElement(By.cssSelector("#mainCol > div.main.kako > section")).getText();
+					} catch(NoSuchElementException excp) {
+						q = driver.findElement(By.cssSelector("#mainCol > div.main.kako > div:nth-child(5)")).getText();
+					}
+				}
+			}
 		}
 		question.setTitle(Utils.crlfToSpace(q));
 		// 分類のテキストを抽出
