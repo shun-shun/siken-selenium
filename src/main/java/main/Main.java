@@ -7,8 +7,8 @@ import java.util.Map;
 
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
 
+import io.github.bonigarcia.wdm.WebDriverManager;
 import strategy.ApStrategy;
 import strategy.CoStrategy;
 import strategy.DbStrategy;
@@ -39,7 +39,7 @@ public class Main {
 	public static void main(String[] args) {
 		int input = getArgument(args);
 		// ポリシーを組み立てる
-		Policy policy = new Policy(strategies.get(8));
+		Policy policy = new Policy(strategies.get(2));
 		// Seleniumドライバの生成
 		WebDriver driver = setOption();
 		// 戦略ごとに初期化
@@ -68,8 +68,9 @@ public class Main {
 	}
 
 	private static WebDriver setOption() {
-		System.setProperty("webdriver.chrome.driver", "C:\\free\\chromedriver.exe");
-		WebDriver driver = new ChromeDriver();
+
+		//System.setProperty("webdriver.chrome.driver", "C:\\Users\\owner\\.cache\\selenium\\chromedriver\\win32\\114.0.5735.90\\chromedriver.exe");
+		WebDriver driver = WebDriverManager.chromedriver().create();
 
 		//要素が見つからない場合最大で20秒間待つよう指定
 		Duration waitTime = Duration.ofSeconds(20);
