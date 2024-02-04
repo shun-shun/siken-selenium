@@ -5,12 +5,13 @@ import java.util.List;
 import org.openqa.selenium.WebDriver;
 
 import data.Question;
+import data.Setting;
 
 /**
  * 戦略
  */
 public interface Strategy {
-
+	
 	/**
 	 * 設定処理
 	 * @param driver Seleniumドライバ
@@ -40,5 +41,10 @@ public interface Strategy {
 	 * @return 問題配列
 	 */
 	public abstract List<String> getQuestionList();
+	
+	
+	public abstract String getConfJson();
+	
+	public abstract void setSetting(Setting setting);
 
 }

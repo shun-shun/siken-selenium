@@ -1,5 +1,6 @@
 package main;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,9 +10,13 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import common.Utils;
 import data.Question;
 import data.Question.SELECTION;
+import data.Setting;
 import strategy.Strategy;
 
 /**
@@ -24,13 +29,40 @@ public class Policy {
 
 	public Policy(Strategy strategy) {
 		this.strategy = strategy;
+		init();
+	}
+	
+	/**
+	 * 初期化処理
+	 */
+	public void init() {
+		String json;
+        try {
+        	json = Utils.readAll(strategy.getConfJson());
+        } catch (IOException e) {
+            // エラーログを出力し、システムを異常終了させます。
+            System.err.println("設定ファイルの読み込みに失敗しました: " + e.getMessage());
+            System.exit(1); // 異常終了を示す
+            return;
+        }
+
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            Setting setting = mapper.readValue(json, Setting.class);
+            strategy.setSetting(setting);
+        } catch (JsonProcessingException e) {
+            // JSON処理のエラーログを出力し、システムを異常終了させます。
+            System.err.println("JSONの解析に失敗しました: " + e.getMessage());
+            System.exit(1); // 異常終了を示す
+            return;
+        }
 	}
 
 	/**
-	 * 初期化処理
+	 * 準備処理
 	 * @param driver Seleniumドライバ
 	 */
-	public void init(WebDriver driver) {
+	public void setup(WebDriver driver) {
 		driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(10));
 		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
 		strategy.init(driver);

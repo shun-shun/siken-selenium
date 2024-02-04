@@ -3,7 +3,6 @@ package strategy;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.openqa.selenium.WebDriver;
@@ -15,64 +14,21 @@ import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
 import common.Utils;
 import data.Question;
+import data.Setting;
 
 public class DbStrategy implements Strategy {
 
+	/** 設定ファイルパス */
+	private static final String DB_CONF_JSON = "db.conf.json";
+	
 	/** アクセス先 */
 	private static final String URL = "https://www.db-siken.com/kakomon/";
 
 	/** ファイル名 */
 	private static final String FILE_NAME = "db.csv";
 
-	/** 年度 */
-	private List<String> nendo = new ArrayList<>();
-
-	/** 問題番号 */
-	private List<String> questionList = new ArrayList<>();
-
-	public DbStrategy() {
-		nendo.add("04_aki");
-		nendo.add("03_aki");
-		nendo.add("02_aki");
-		nendo.add("31_haru");
-		nendo.add("30_haru");
-		nendo.add("29_haru");
-		nendo.add("28_haru");
-		nendo.add("27_haru");
-		nendo.add("26_haru");
-		nendo.add("25_haru");
-		nendo.add("24_haru");
-		nendo.add("23_toku");
-		nendo.add("22_haru");
-		nendo.add("21_haru");
-
-		questionList.add("/am2_1.html");
-		questionList.add("/am2_2.html");
-		questionList.add("/am2_3.html");
-		questionList.add("/am2_4.html");
-		questionList.add("/am2_5.html");
-		questionList.add("/am2_6.html");
-		questionList.add("/am2_7.html");
-		questionList.add("/am2_8.html");
-		questionList.add("/am2_9.html");
-		questionList.add("/am2_10.html");
-		questionList.add("/am2_11.html");
-		questionList.add("/am2_12.html");
-		questionList.add("/am2_13.html");
-		questionList.add("/am2_14.html");
-		questionList.add("/am2_15.html");
-		questionList.add("/am2_16.html");
-		questionList.add("/am2_17.html");
-		questionList.add("/am2_18.html");
-		questionList.add("/am2_19.html");
-		questionList.add("/am2_20.html");
-		questionList.add("/am2_21.html");
-		questionList.add("/am2_22.html");
-		questionList.add("/am2_23.html");
-		questionList.add("/am2_24.html");
-		questionList.add("/am2_25.html");
-
-	}
+	/** 設定情報 */
+	private Setting setting;
 
 	@Override
 	public void init(WebDriver driver) {
@@ -96,11 +52,21 @@ public class DbStrategy implements Strategy {
 
 	@Override
 	public List<String> getNendo() {
-		return this.nendo;
+		return this.setting.getNendo();
 	}
 
 	@Override
 	public List<String> getQuestionList() {
-		return this.questionList;
+		return this.setting.getQuestionList();
+	}
+	
+	@Override
+	public String getConfJson() {
+		return DB_CONF_JSON;
+	}
+	
+	@Override
+	public void setSetting(Setting setting) {
+		this.setting = setting;
 	}
 }

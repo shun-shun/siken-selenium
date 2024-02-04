@@ -8,6 +8,7 @@ import java.util.Map;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 
+import common.Utils;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import strategy.ApStrategy;
 import strategy.CoStrategy;
@@ -21,10 +22,14 @@ import strategy.Strategy;
 
 public class Main {
 
+	/** 出力先フォルダパス */
+	private static final String OUT = "out";
+	
 	/** 戦略群 */
 	private static Map<Integer, Strategy> strategies = new HashMap<>();
 
 	static {
+		Utils.mkdir(OUT);
 		// 応用の戦略
 		strategies.put(1, new ApStrategy());
 		strategies.put(2, new FeStrategy());
@@ -43,7 +48,7 @@ public class Main {
 		// Seleniumドライバの生成
 		WebDriver driver = setOption();
 		// 戦略ごとに初期化
-		policy.init(driver);
+		policy.setup(driver);
 
 		double start = System.nanoTime();
 		List<String> item = policy.getItem();
@@ -55,13 +60,23 @@ public class Main {
 					policy.execute(driver, url);
 					break;
 				} catch (TimeoutException e) {
+					driver.navigate().refresh();
 					continue;
 				}
 			}
 			double end = System.nanoTime();
-			double time = (end - start) / Math.pow(10, 9);
-			double timeLeft = (item.size() - i) * (time / i);
-			System.out.println("全体：" + item.size() + " 現在：" + i++ + " 処理時間：" + time  + "s " + " 残り時間：" + timeLeft);
+		    double time = (end - start) / Math.pow(10, 9);
+		    double timeLeft = (item.size() - i) * (time / i);
+			// 残り時間を秒単位で切り上げる
+		    int secondsLeft = (int) Math.ceil(timeLeft);
+		    
+		    // 時間、分、秒に変換
+		    int hours = secondsLeft / 3600;
+		    int minutes = (secondsLeft % 3600) / 60;
+		    int seconds = secondsLeft % 60;
+		    
+		    // 残り時間を時/分/秒形式で表示
+		    System.out.printf("全体：%d 現在：%d 処理時間：%.2fs 残り時間：%02d:%02d:%02d\n", item.size(), i++, time, hours, minutes, seconds);
 		}
 		// Seleniumドライバの終了
 		driver.quit();
