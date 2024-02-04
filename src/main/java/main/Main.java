@@ -1,6 +1,7 @@
 package main;
 
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +45,7 @@ public class Main {
 	public static void main(String[] args) {
 		int input = getArgument(args);
 		// ポリシーを組み立てる
-		Policy policy = new Policy(strategies.get(2));
+		Policy policy = new Policy(strategies.get(input));
 		// Seleniumドライバの生成
 		WebDriver driver = setOption();
 		// 戦略ごとに初期化
@@ -60,7 +61,6 @@ public class Main {
 					policy.execute(driver, url);
 					break;
 				} catch (TimeoutException e) {
-					driver.navigate().refresh();
 					continue;
 				}
 			}
@@ -106,7 +106,7 @@ public class Main {
 		} else if (args.length == 0) {
 			input = 1;
 		} else {
-			System.err.println("引数は1つのみ設定できます.");
+			System.err.println("引数は1つのみ設定できます. >" + Arrays.asList(args));
 			System.exit(1);
 		}
 		return input;
