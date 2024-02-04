@@ -25,7 +25,7 @@ public class SgStrategy implements Strategy {
 	private static final String URL = "https://www.sg-siken.com/kakomon/";
 
 	/** ファイル名 */
-	private static final String FILE_NAME = "sg.csv";
+	private static final String FILE_NAME = "out/sg.csv";
 
 	/** 設定情報 */
 	private Setting setting;

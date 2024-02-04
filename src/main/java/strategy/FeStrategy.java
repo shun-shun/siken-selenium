@@ -25,7 +25,7 @@ public class FeStrategy implements Strategy {
 	private static final String URL = "https://www.fe-siken.com/kakomon/";
 
 	/** ファイル名 */
-	private static final String FILE_NAME = "fe.csv";
+	private static final String FILE_NAME = "out/fe.csv";
 
 	/** 設定情報 */
 	private Setting setting;

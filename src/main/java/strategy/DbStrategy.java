@@ -25,7 +25,7 @@ public class DbStrategy implements Strategy {
 	private static final String URL = "https://www.db-siken.com/kakomon/";
 
 	/** ファイル名 */
-	private static final String FILE_NAME = "db.csv";
+	private static final String FILE_NAME = "out/db.csv";
 
 	/** 設定情報 */
 	private Setting setting;

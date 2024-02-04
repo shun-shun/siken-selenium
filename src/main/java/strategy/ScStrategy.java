@@ -25,7 +25,7 @@ public class ScStrategy implements Strategy {
 	private static final String URL = "https://www.sc-siken.com/kakomon/";
 
 	/** ファイル名 */
-	private static final String FILE_NAME = "sc.csv";
+	private static final String FILE_NAME = "out/sc.csv";
 
 	/** 設定情報 */
 	private Setting setting;

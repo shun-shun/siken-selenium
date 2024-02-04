@@ -25,7 +25,7 @@ public class CoStrategy implements Strategy {
 	private static final String URL = "https://www.sc-siken.com/kakomon/";
 
 	/** ファイル名 */
-	private static final String FILE_NAME = "common.csv";
+	private static final String FILE_NAME = "out/common.csv";
 
 	/** 設定情報 */
 	private Setting setting;

@@ -25,7 +25,7 @@ public class NwStrategy implements Strategy {
 	private static final String URL = "https://www.nw-siken.com/kakomon/";
 
 	/** ファイル名 */
-	private static final String FILE_NAME = "nw.csv";
+	private static final String FILE_NAME = "out/nw.csv";
 
 	/** 設定情報 */
 	private Setting setting;

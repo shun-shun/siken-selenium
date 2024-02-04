@@ -25,7 +25,7 @@ public class ItpStrategy implements Strategy {
 	private static final String URL = "https://www.itpassportsiken.com/kakomon/";
 
 	/** ファイル名 */
-	private static final String FILE_NAME = "itp.csv";
+	private static final String FILE_NAME = "out/itp.csv";
 
 	/** 設定情報 */
 	private Setting setting;
