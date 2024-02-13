@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 
 import common.Utils;
 import io.github.bonigarcia.wdm.WebDriverManager;
@@ -84,8 +85,11 @@ public class Main {
 
 	private static WebDriver setOption() {
 
-		//System.setProperty("webdriver.chrome.driver", "C:\\Users\\owner\\.cache\\selenium\\chromedriver\\win32\\114.0.5735.90\\chromedriver.exe");
-		WebDriver driver = WebDriverManager.chromedriver().create();
+		ChromeOptions chromeOptions = new ChromeOptions();  
+		chromeOptions.addArguments("--headless");
+		chromeOptions.addArguments("--no-sandbox");
+		
+		WebDriver driver = WebDriverManager.chromedriver().capabilities(chromeOptions).create();
 
 		//要素が見つからない場合最大で20秒間待つよう指定
 		Duration waitTime = Duration.ofSeconds(20);
