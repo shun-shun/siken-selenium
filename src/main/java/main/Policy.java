@@ -64,7 +64,6 @@ public class Policy {
 	 */
 	public void setup(WebDriver driver) {
 		driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(10));
-		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
 		strategy.init(driver);
 	}
 
