@@ -31,31 +31,31 @@ public class Policy {
 		this.strategy = strategy;
 		init();
 	}
-	
+
 	/**
 	 * 初期化処理
 	 */
 	public void init() {
 		String json;
-        try {
-        	json = Utils.readAll(strategy.getConfJson());
-        } catch (IOException e) {
-            // エラーログを出力し、システムを異常終了させます。
-            System.err.println("設定ファイルの読み込みに失敗しました: " + e.getMessage());
-            System.exit(1); // 異常終了を示す
-            return;
-        }
+		try {
+			json = Utils.readAll(strategy.getConfJson());
+		} catch (IOException e) {
+			// エラーログを出力し、システムを異常終了させます。
+			System.err.println("設定ファイルの読み込みに失敗しました: " + e.getMessage());
+			System.exit(1); // 異常終了を示す
+			return;
+		}
 
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            Setting setting = mapper.readValue(json, Setting.class);
-            strategy.setSetting(setting);
-        } catch (JsonProcessingException e) {
-            // JSON処理のエラーログを出力し、システムを異常終了させます。
-            System.err.println("JSONの解析に失敗しました: " + e.getMessage());
-            System.exit(1); // 異常終了を示す
-            return;
-        }
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			Setting setting = mapper.readValue(json, Setting.class);
+			strategy.setSetting(setting);
+		} catch (JsonProcessingException e) {
+			// JSON処理のエラーログを出力し、システムを異常終了させます。
+			System.err.println("JSONの解析に失敗しました: " + e.getMessage());
+			System.exit(1); // 異常終了を示す
+			return;
+		}
 	}
 
 	/**
@@ -92,16 +92,16 @@ public class Policy {
 		String q;
 		try {
 			q = driver.findElement(By.cssSelector("#mondai")).getText();
-		} catch(NoSuchElementException e) {
+		} catch (NoSuchElementException e) {
 			try {
 				q = driver.findElement(By.cssSelector("#mainCol > div.main.kako > div:nth-child(4)")).getText();
 			} catch (NoSuchElementException ex) {
 				try {
 					q = driver.findElement(By.cssSelector("#mainCol > div.main.kako > article")).getText();
-				} catch(NoSuchElementException exc) {
+				} catch (NoSuchElementException exc) {
 					try {
 						q = driver.findElement(By.cssSelector("#mainCol > div.main.kako > section")).getText();
-					} catch(NoSuchElementException excp) {
+					} catch (NoSuchElementException excp) {
 						q = driver.findElement(By.cssSelector("#mainCol > div.main.kako > div:nth-child(5)")).getText();
 					}
 				}
@@ -109,7 +109,7 @@ public class Policy {
 		}
 		question.setTitle(Utils.crlfToSpace(q));
 		// 分類のテキストを抽出
-		String clazzP = driver.findElement(By.cssSelector("#mainCol > div.main.kako > p")).getText();
+		String clazzP = driver.findElement(By.cssSelector("#mainCol > div.main.kako > div:nth-child(7)")).getText();
 		// 「»」以降の文字を削除
 		String clazz1 = clazzP.replaceAll("\\s».*", "");
 		question.setClazz1(clazz1);
@@ -158,7 +158,7 @@ public class Policy {
 			WebElement ans = driver.findElement(By.id("answerChar"));
 			SELECTION selection = SELECTION.toSelection(ans.getText());
 			question.setAns(selection.getValue());
-		} catch (NoSuchElementException  | IllegalArgumentException e) {
+		} catch (NoSuchElementException | IllegalArgumentException e) {
 			// 何もしない
 			System.err.println(question.getTitle());
 		}

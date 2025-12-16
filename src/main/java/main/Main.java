@@ -26,7 +26,7 @@ public class Main {
 
 	/** 出力先フォルダパス */
 	private static final String OUT = "out";
-	
+
 	/** 戦略群 */
 	private static Map<Integer, Strategy> strategies = new HashMap<>();
 
@@ -66,18 +66,19 @@ public class Main {
 				}
 			}
 			double end = System.nanoTime();
-		    double time = (end - start) / Math.pow(10, 9);
-		    double timeLeft = (item.size() - i) * (time / i);
+			double time = (end - start) / Math.pow(10, 9);
+			double timeLeft = (item.size() - i) * (time / i);
 			// 残り時間を秒単位で切り上げる
-		    int secondsLeft = (int) Math.ceil(timeLeft);
-		    
-		    // 時間、分、秒に変換
-		    int hours = secondsLeft / 3600;
-		    int minutes = (secondsLeft % 3600) / 60;
-		    int seconds = secondsLeft % 60;
-		    
-		    // 残り時間を時/分/秒形式で表示
-		    System.out.printf("全体：%d 現在：%d 処理時間：%.2fs 残り時間：%02d:%02d:%02d\n", item.size(), i++, time, hours, minutes, seconds);
+			int secondsLeft = (int) Math.ceil(timeLeft);
+
+			// 時間、分、秒に変換
+			int hours = secondsLeft / 3600;
+			int minutes = (secondsLeft % 3600) / 60;
+			int seconds = secondsLeft % 60;
+
+			// 残り時間を時/分/秒形式で表示
+			System.out.printf("全体：%d 現在：%d 処理時間：%.2fs 残り時間：%02d:%02d:%02d\n", item.size(), i++, time, hours, minutes,
+					seconds);
 		}
 		// Seleniumドライバの終了
 		driver.quit();
@@ -85,10 +86,12 @@ public class Main {
 
 	private static WebDriver setOption() {
 
-		ChromeOptions chromeOptions = new ChromeOptions();  
-		chromeOptions.addArguments("--headless");
+		ChromeOptions chromeOptions = new ChromeOptions();
 		chromeOptions.addArguments("--no-sandbox");
-		
+		chromeOptions.addArguments("--disable-dev-shm-usage");
+		chromeOptions.addArguments("--disable-gpu");
+		chromeOptions.addArguments("--headless=new");
+
 		WebDriver driver = WebDriverManager.chromedriver().capabilities(chromeOptions).create();
 
 		//要素が見つからない場合最大で20秒間待つよう指定
